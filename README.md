@@ -115,6 +115,13 @@ python3 tests/run_tests.py --pristine /path/to/know-good/BCD
   cell allocation, new-key creation on boot-critical hives. These broke real
   machines; they will not be added.
 
+## Lessons & postmortems
+
+* [docs/incident-postmortem.md](docs/incident-postmortem.md) — boot menu destroyed
+  by hive repacking (x2), full binary forensics
+* [docs/lessons-powershell-binding.md](docs/lessons-powershell-binding.md) —
+  PowerShell positional-binding trap (real delivery incident)
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

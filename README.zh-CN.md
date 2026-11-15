@@ -109,6 +109,13 @@ python3 tests/run_tests.py --pristine /path/to/known-good/BCD
 * **不支持：** 重排型写入（hivex `commit()` 的结构性变更）、单元格分配、
   在引导关键 hive 上新建键。这些曾毁掉真实机器；本项目不会加入这些能力。
 
+## 教训与复盘
+
+* [docs/incident-postmortem.zh-CN.md](docs/incident-postmortem.zh-CN.md) —
+  hive 重排两次毁掉启动菜单，完整二进制取证
+* [docs/lessons-powershell-binding.zh-CN.md](docs/lessons-powershell-binding.zh-CN.md) —
+  PowerShell 位置参数绑定陷阱（真实交付事故）
+
 ## 许可证
 
 MIT — 见 [LICENSE](LICENSE)。

@@ -3,6 +3,8 @@
 **Context:** delivery of a hot-add console script; every launcher failed with
 `PositionalParameterNotFound`.
 
+> 中文版：[lessons-powershell-binding.zh-CN.md](lessons-powershell-binding.zh-CN.md)
+
 ## The trap
 
 ```powershell
