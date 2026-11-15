@@ -4,6 +4,8 @@
 **Impact:** 2 failed boots requiring Linux-side recovery; no data loss
 **Author:** reconstructed from session logs, 2026-11-15
 
+> 中文版：[incident-postmortem.zh-CN.md](incident-postmortem.zh-CN.md)
+
 ## Timeline
 
 ### Attempt 1 — hivex structural edit

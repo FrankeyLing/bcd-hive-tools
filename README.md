@@ -7,6 +7,8 @@ Boot Configuration Data (BCD) — from Linux.
 naive approach broke a real machine's boot menu twice. See
 [docs/incident-postmortem.md](docs/incident-postmortem.md).
 
+> 中文文档：[README.zh-CN.md](README.zh-CN.md)
+
 ## Why this exists
 
 Windows hives are not just "a file with keys and values". They are transactional
