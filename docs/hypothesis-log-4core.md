@@ -47,17 +47,21 @@ end of driver load (~276 BOOTLOG_LOADED entries, same as all prior 4-core attemp
 | x2APIC incompatibility | **ELIMINATED** (Y died with xAPIC) |
 | VBS interference | ELIMINATED (earlier) |
 
-## Remaining architecture-level suspect
+## Update 2026-11-17 (later): firmware-prep chain ALSO dies
 
-The FIREBAT chain entries in the menu are self-documenting:
-`FIREBAT 12 CPUs idle-poll [boot via chain Boot0000 only]` — the old project's
-design requires booting through UEFI `Boot0000` chain (FULL12.EFI) which installs
-firmware gating tables (FirebatAcpiInstall + DYN12.EFI) BEFORE winload runs.
-Without that pre-boot firmware preparation, direct BCD multi-core boots hang at
-AP bring-up — consistent with every observation to date.
+User booted via motherboard firmware menu → `Boot0000` (FULL12.EFI chain ran
+first) → 12-core Windows still hard-froze at the same signature point.
 
-**Next test (user, no Linux involved):** reboot into the motherboard UEFI boot
-menu (not Windows Boot Manager) and select the FIREBAT chain entry that goes
-through Boot0000, letting FULL12.EFI run first. If 12-core Windows boots, the
-entire solution is firmware-prep-dependent, and the hot-add project must target
-the firmware gate — not OS-side numproc.
+| Hypothesis | Status |
+|---|---|
+| Missing firmware gating tables (FirebatAcpiInstall/DYN12.EFI prep) | **ELIMINATED** (chain boot with prep still died) |
+
+**Every pre-OS hypothesis is now eliminated** (VBS, hypervisor, x2APIC,
+firmware prep). The hang is *inside* Windows AP bring-up/scheduler, at the
+~276 BOOTLOG_LOADED point regardless of entry path. Only Ubuntu's global
+`idle=poll` (set before any AP boots) diverges from all Windows attempts.
+
+Next direction: OS-side equivalents of global poll-idle (kernel args /
+C-state disable via powercfg) or a testsigning kernel-level driver (Route B);
+plus a core-count bisection (2→3→4 cores with IDLEDISABLE) to map the
+threshold.
