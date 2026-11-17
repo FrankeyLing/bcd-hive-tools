@@ -31,3 +31,26 @@
 
 引导挂死后强制断电会丢掉一切：evtx 从未刷盘、新条目没开 bootlog、无法产生 dump。
 **下一批测试条目必须加 `bootlog yes`**——至少能记录到驱动加载进度。
+
+## 更新 2026-11-17：对照实验结果——两个假设全部排除
+
+TEST-X（hypervisor 开）与 TEST-Y（xAPIC 传统模式）都在同一位置硬死锁：
+驱动加载结束处（~276 条 BOOTLOG_LOADED，与之前所有 4 核尝试一致）。
+
+| 假设 | 状态 |
+|---|---|
+| Hyper-V 的 MWAIT 拦截是必需的 | **已排除**（X 在 HV 开启下仍死） |
+| x2APIC 兼容性问题 | **已排除**（Y 在 xAPIC 下仍死） |
+| VBS 干扰 | 已排除（更早） |
+
+## 剩下的架构级嫌疑
+
+菜单里的 FIREBAT 链式条目自述：`[boot via chain Boot0000 only]`——老项目的设计
+要求先经 UEFI `Boot0000` 链（FULL12.EFI）在 winload 运行前装好固件门控表
+（FirebatAcpiInstall + DYN12.EFI）。缺少这次引导前固件准备时，直接从 BCD 选
+多核条目会在 AP bring-up 阶段挂死——与迄今全部观测一致。
+
+**下一步实验（用户操作，不涉及 Linux）：** 重启进主板 UEFI 启动菜单（不是
+Windows Boot Manager），选择经过 Boot0000 链的 FIREBAT 条目，让 FULL12.EFI 先跑。
+如果 12 核 Windows 能进，整个方案就是固件预备依赖型的，热加载项目必须瞄准固件
+门控——而不是 OS 侧的 numproc。

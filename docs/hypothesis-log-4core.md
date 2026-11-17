@@ -35,3 +35,29 @@ Forced power-offs at boot-hang lose everything: evtx never flushed, bootlog abse
 on new entries (must add `bootlog Yes` to test entries), no dump possible.
 **Next test entries must include `bootlog yes`** to at least capture driver-load
 progress.
+
+## Update 2026-11-17: bracket results — BOTH eliminated
+
+TEST-X (hypervisor ON) and TEST-Y (xAPIC legacy) both hard-froze at the same point:
+end of driver load (~276 BOOTLOG_LOADED entries, same as all prior 4-core attempts).
+
+| Hypothesis | Status |
+|---|---|
+| Hyper-V MWAIT interception needed | **ELIMINATED** (X died with HV on) |
+| x2APIC incompatibility | **ELIMINATED** (Y died with xAPIC) |
+| VBS interference | ELIMINATED (earlier) |
+
+## Remaining architecture-level suspect
+
+The FIREBAT chain entries in the menu are self-documenting:
+`FIREBAT 12 CPUs idle-poll [boot via chain Boot0000 only]` — the old project's
+design requires booting through UEFI `Boot0000` chain (FULL12.EFI) which installs
+firmware gating tables (FirebatAcpiInstall + DYN12.EFI) BEFORE winload runs.
+Without that pre-boot firmware preparation, direct BCD multi-core boots hang at
+AP bring-up — consistent with every observation to date.
+
+**Next test (user, no Linux involved):** reboot into the motherboard UEFI boot
+menu (not Windows Boot Manager) and select the FIREBAT chain entry that goes
+through Boot0000, letting FULL12.EFI run first. If 12-core Windows boots, the
+entire solution is firmware-prep-dependent, and the hot-add project must target
+the firmware gate — not OS-side numproc.
